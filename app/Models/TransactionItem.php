@@ -16,13 +16,13 @@ class TransactionItem extends Model
      */
     protected $fillable = [
         'users_id',
-        'products_id',
+        'product_id',
         'transactions_id',
         'quantity',
     ];
 
     public function product()
     {
-        return $this->hasMany(Product::class, 'id', 'products_id');
+        return $this->hasMany(Product::class, 'id', 'product_id');
     }
 }

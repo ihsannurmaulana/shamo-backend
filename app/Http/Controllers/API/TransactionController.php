@@ -35,7 +35,7 @@ class TransactionController extends Controller
             }
         }
 
-        $transaction = Transaction::with(['items_product'])->where('users_id', Auth::user()->id);
+        $transaction = Transaction::with(['items.product'])->where('users_id', Auth::user()->id);
 
         if ($status) {
             $transaction->where('status', $status);
@@ -51,7 +51,7 @@ class TransactionController extends Controller
     {
         $request->validate([
             'items' => 'required|array',
-            'items.*.id' => 'exists::products,id',
+            'items.*.id' => 'exists:products,id',
             'total_price' => 'required',
             'shipping_price' => 'required',
             'status' => 'required|in:PENDING, SUCCESS, CANCELLED, FAILED, SHIPPING, SHIPPED'

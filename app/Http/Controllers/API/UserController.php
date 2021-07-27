@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Rules\Password;
 
 class UserController extends Controller
@@ -20,7 +21,7 @@ class UserController extends Controller
                 'name' => ['required', 'string', 'max:255'],
                 'username' => ['required', 'string', 'max:255', 'unique:users'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-                'phone' => ['nullable', 'string', 'max:255'],
+
                 'password' => ['required', 'string', new Password],
             ]);
 
@@ -28,7 +29,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'username' => $request->username,
                 'email' => $request->email,
-                'phone' => $request->phone,
+
                 'password' => Hash::make($request->password),
             ]);
 
@@ -52,10 +53,14 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try {
-            $request->validate([
+            $validator = Validator::make($request->all(), [
                 'email' => 'email|required',
                 'password' => 'required'
             ]);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 400);
+            }
 
             $credentials = request(['email', 'password']);
             if (!Auth::attempt($credentials)) {
